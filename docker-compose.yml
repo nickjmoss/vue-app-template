@@ -1,0 +1,24 @@
+version: '3.8'
+services:
+    server:
+        image: vue-app-template
+        stdin_open: true
+        tty: true
+        build:
+            dockerfile: Dockerfile.dev
+            context: .
+        command: bun run start
+        working_dir: /app
+        environment:
+            NODE_ENV: development # Has to be passed into the Docker container in order to allow dev dependencies
+        ports:
+            - 4000:4000
+            - 6060:6060
+        volumes:
+            - ./packages/server:/app/packages/server
+            - ./packages/src:/app/packages/src
+            - /app/node_modules
+        container_name: vue-app-template
+
+volumes:
+    node_modules:

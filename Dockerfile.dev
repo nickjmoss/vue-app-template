@@ -1,0 +1,21 @@
+# Use Bun as the base image
+FROM oven/bun:latest
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the root package.json, bun.lockb (for caching) and workspace config
+COPY package.json bun.lock .npmrc ./
+
+# Copy only package.json files to leverage Docker caching for dependencies
+COPY packages/src/package.json packages/src/
+COPY packages/server/package.json packages/server/
+
+# Install all dependencies (hoisted in /node_modules)
+RUN bun install
+
+# Copy the entire workspace (excluding node_modules)
+COPY . .
+
+# Expose the server's port
+EXPOSE 6060 4000

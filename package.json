@@ -1,0 +1,36 @@
+{
+    "name": "vue-app-template",
+    "version": "0.0.0",
+    "scripts": {
+        "start": "bun run server & bun run frontend",
+        "start:prod": "cd server-build && bun run start:prod",
+        "start:localprod": "bash localprod.sh",
+        "build": "bun run server:build && bun run frontend:build",
+        "lint": "bun run server:lint && bun run frontend:lint",
+        "frontend": "cd packages/src && bun run start",
+        "frontend:build": "cd packages/src && bun run build",
+        "frontend:lint": "cd packages/src && bun run lint",
+        "server": "cd packages/server && bun run start",
+        "server:build": "cd packages/server && bun run build",
+        "server:lint": "cd packages/server && bun run lint",
+        "server:prisma:generate": "cd packages/server && bun run prisma:generate"
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.20.0",
+        "@types/node": "^22.13.1",
+        "@typescript-eslint/eslint-plugin": "^8.24.0",
+        "@typescript-eslint/parser": "^8.24.0",
+        "eslint": "^9.20.0",
+        "eslint-plugin-prettier": "^5.2.3",
+        "prettier": "^3.5.0",
+        "typescript": "^5.7.3"
+    },
+    "private": true,
+    "type": "module",
+    "workspaces": [
+        "packages/*"
+    ],
+    "dependencies": {
+        "dayjs": "^1.11.13"
+    }
+}
