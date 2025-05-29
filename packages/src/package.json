@@ -12,6 +12,7 @@
     },
     "devDependencies": {
         "@nickjmoss/eslint-config-frontend": "^1.0.1",
+        "@types/vue": "^2.0.0",
         "@vitejs/plugin-vue": "^5.2.1",
         "eslint-plugin-vue": "^9.32.0",
         "sass": "^1.84.0",
