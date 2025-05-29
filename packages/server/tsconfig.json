@@ -9,7 +9,11 @@
 		"forceConsistentCasingInFileNames": true,
 		"declaration": false,
 		"baseUrl": ".",
-		"outDir": "../../dist/server-build"
+		"outDir": "../../dist/server-build",
+		"paths": {
+			"@controllers/*": ["./controllers/*"],
+			"@routes/*": ["./routes/*"]
+		}
 	},
 	"include": [
 		"./**/*.ts"

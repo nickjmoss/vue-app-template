@@ -6,7 +6,7 @@
     "scripts": {
         "start": "bun --watch index.ts",
         "start:prod": "bunx pm2-runtime start --name vue-app-template --interpreter /usr/local/bin/bun index.js",
-        "build": "tsc",
+        "build": "tsc && tsc-alias",
         "build:test": "tsv --noEmit",
         "lint": "eslint",
         "lint:fix": "eslint --fix",
@@ -15,9 +15,9 @@
     },
     "devDependencies": {
         "@nickjmoss/eslint-config-backend": "^1.0.1",
+        "jiti": "^2.4.2",
         "pino-pretty": "^13.0.0",
-        "ts-node-dev": "^2.0.0",
-        "tsconfig-paths": "^4.2.0"
+        "tsc-alias": "^1.8.16"
     },
     "dependencies": {
         "@fastify/cors": "^10.0.2",
