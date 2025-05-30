@@ -2,7 +2,7 @@ import fastify, { FastifyLoggerOptions, RawServerDefault } from 'fastify';
 import fastifyStatic from '@fastify/static';
 import fastifyCors from '@fastify/cors';
 import path from 'path';
-import { router } from './routes/index.routes';
+import { router } from '@routes/index.routes';
 import { PinoLoggerOptions } from 'fastify/types/logger';
 
 const PORT = Number(process.env.PORT) || 4000;

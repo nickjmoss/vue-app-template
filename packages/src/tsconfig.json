@@ -20,7 +20,7 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["./**/*.ts", "./**/*.tsx", "./**/*.vue"],
+  "include": ["./**/*.ts", "./**/*.tsx", "./**/*.vue", "eslint.config.js"],
   "exclude": ["node_modules", "vite.config.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

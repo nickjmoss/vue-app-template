@@ -3,6 +3,7 @@
     "private": true,
     "version": "0.0.0",
     "main": "index.js",
+    "type": "module",
     "scripts": {
         "start": "bun --watch index.ts",
         "start:prod": "bunx pm2-runtime start --name vue-app-template --interpreter /usr/local/bin/bun index.js",
