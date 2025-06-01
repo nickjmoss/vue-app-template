@@ -1,6 +1,8 @@
 # Use Bun as the base image
 FROM oven/bun:latest
 
+RUN apt-get update -y && apt-get install -y openssl
+
 # Set the working directory inside the container
 WORKDIR /app
 
@@ -16,6 +18,9 @@ RUN bun install
 
 # Copy the entire workspace (excluding node_modules)
 COPY . .
+
+# Generate Prisma Client
+RUN bun run --filter=./packages/server prisma:generate
 
 # Expose the server's port
 EXPOSE 6060 4000

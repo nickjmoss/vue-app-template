@@ -1,56 +1,57 @@
 # Use Bun as the base image for building
 FROM oven/bun:latest AS builder
 
-# Set the working directory inside the container
 WORKDIR /app
 
-# Copy the root package.json, bun.lock (for caching), and workspace config
+# Copy workspace root files
 COPY package.json bun.lock .npmrc ./
 
-# Copy only package.json files to leverage Docker caching for dependencies
+# Copy only relevant package.json files for caching
 COPY packages/src/package.json packages/src/
 COPY packages/server/package.json packages/server/
 
-# Install dependencies (hoisted in /node_modules) for the build steps
+# Install all dependencies
 RUN bun install --frozen-lockfile
 
-# Copy the entire workspace (excluding node_modules)
+# Copy the full monorepo
 COPY . .
 
-# ----------------------------------------------------------------------------------
-# |                                                                                 |
-# |  !!!IMPORTANT: Uncomment the following line once schema.prisma is populated!!!  |
-# |                                                                                 |
-# ----------------------------------------------------------------------------------
-# RUN bun run server:prisma:generate
+# Generate Prisma Client
+RUN bun run --filter=./packages/server prisma:generate
 
-# Run build steps for each package
+# Build source and server packages
 RUN bun run --filter=./packages/src build
 RUN bun run --filter=./packages/server build
 
-# Create a minimal runtime image
+# ----------------------------
+# Runtime Stage
+# ----------------------------
 FROM oven/bun:latest AS runtime
 
-# Set the working directory
+# Install openssl for Prisma
+RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
-# Copy only necessary files from the builder stage
-COPY --from=builder /app/package.json /app/bun.lock ./
+# Copy only what's needed for production
 COPY --from=builder /app/dist/frontend-build ./frontend-build
-COPY --from=builder /app/packages/server/package.json ./server-build/package.json
 COPY --from=builder /app/dist/server-build ./server-build
+COPY --from=builder /app/packages/server/package.json ./server-build/package.json
+COPY --from=builder /app/packages/server/prisma ./server-build/prisma
 
-# copy .npmrc from builder stage to server-build temporarily
+# Copy generated Prisma client (essential for Prisma to work)
+COPY --from=builder /app/node_modules/@prisma ./server-build/node_modules/@prisma
+COPY --from=builder /app/node_modules/.prisma ./server-build/node_modules/.prisma
+
+# Install only production deps for server
 COPY --from=builder /app/.npmrc ./server-build/
+RUN cd server-build && bun install --production && rm .npmrc
 
-# Install only production dependencies for the server-build since frontend dependencies are not needed
-RUN cd server-build && bun install --production
+# Change working directory to server-build
+WORKDIR /app/server-build
 
-# remove .npmrc since it is not needed in the runtime image
-RUN rm ./server-build/.npmrc
-
-# Expose the necessary ports
+# Expose app port
 EXPOSE 4000
 
-# Set the startup command
+# Start app directly from the server-build directory
 CMD ["bun", "run", "start:prod"]

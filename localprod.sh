@@ -13,6 +13,28 @@ fi
 
 # Create and run a new container with the same name
 docker build -t $IMAGE_NAME .
-docker run -d -e NODE_ENV=production -e PORT=4000 --name $CONTAINER_NAME -p 6060:4000 $IMAGE_NAME
 
+# Read environment variables from .env file
+ENV_ARGS=""
+if [ -f "./packages/server/.env" ]; then
+    echo "Loading environment variables from ./packages/server/.env"
+    while IFS= read -r line || [[ -n "$line" ]]; do
+        # Skip empty lines and comments
+        if [[ ! -z "$line" && ! "$line" =~ ^# ]]; then
+            # Add each environment variable to the docker run command
+            ENV_ARGS="$ENV_ARGS -e $line"
+        fi
+    done < "./packages/server/.env"
+else
+    echo "Warning: .env file not found in ./packages/server/"
+fi
+
+# Always include these environment variables
+ENV_ARGS="$ENV_ARGS -e NODE_ENV=production -e PORT=4000"
+
+# Run the container with all environment variables
+echo "Starting container with environment variables..."
+docker run -d $ENV_ARGS --name $CONTAINER_NAME -p 6060:4000 $IMAGE_NAME
+
+# Follow the logs
 docker logs -f $CONTAINER_NAME

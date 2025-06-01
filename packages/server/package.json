@@ -7,7 +7,7 @@
     "scripts": {
         "start": "bun --watch index.ts",
         "start:prod": "bunx pm2-runtime start --name vue-app-template --interpreter /usr/local/bin/bun index.js",
-        "build": "tsc && tsc-alias",
+        "build": "tsc && tsc-alias && cp -r prisma ../../dist/server-build/prisma",
         "build:test": "tsv --noEmit",
         "lint": "eslint",
         "lint:fix": "eslint --fix",
