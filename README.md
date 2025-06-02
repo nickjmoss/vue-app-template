@@ -25,12 +25,14 @@ This template leverages the following tech stack:
 Lots of the boilerplate has already been provided. You will need to do the following things in order to get this all set up:
 
 1. Generate a repository off of this template.
-2. Add `.npmrc` in order to download `@nickjmoss` packages.
+2. Add `.npmrc` at the root in order to download `@nickjmoss` packages.
 3. Install all dependencies
     ```bash
     bun install
     ```
 4. Replace all instances of `vue-app-template` with your app name.
+5. Update the schema.prisma file to match your DB schema and provider.
+6. Create a .env file in `packages/server` and add `DATABASE_URL` with your DB connection string.
 
 ## Important
 

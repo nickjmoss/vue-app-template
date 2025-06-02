@@ -1,6 +1,8 @@
 # Use Bun as the base image for building
 FROM oven/bun:latest AS builder
 
+RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
 # Copy workspace root files
@@ -37,7 +39,6 @@ WORKDIR /app
 COPY --from=builder /app/dist/frontend-build ./frontend-build
 COPY --from=builder /app/dist/server-build ./server-build
 COPY --from=builder /app/packages/server/package.json ./server-build/package.json
-COPY --from=builder /app/packages/server/prisma ./server-build/prisma
 
 # Copy generated Prisma client (essential for Prisma to work)
 COPY --from=builder /app/node_modules/@prisma ./server-build/node_modules/@prisma
