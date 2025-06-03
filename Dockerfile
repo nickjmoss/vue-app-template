@@ -1,6 +1,8 @@
 # Use Bun as the base image for building
 FROM oven/bun:latest AS builder
 
+ARG NICKJMOSS_NPM_AUTH_TOKEN
+
 RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -30,6 +32,8 @@ RUN bun run --filter=./packages/server build
 # ----------------------------
 FROM oven/bun:latest AS runtime
 
+ARG NICKJMOSS_NPM_AUTH_TOKEN
+
 # Install openssl for Prisma
 RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
@@ -40,12 +44,14 @@ COPY --from=builder /app/dist/frontend-build ./frontend-build
 COPY --from=builder /app/dist/server-build ./server-build
 COPY --from=builder /app/packages/server/package.json ./server-build/package.json
 
+# Copy .npmrc over from builder
+COPY --from=builder /app/.npmrc ./server-build/.npmrc
+
 # Copy generated Prisma client (essential for Prisma to work)
 COPY --from=builder /app/node_modules/@prisma ./server-build/node_modules/@prisma
 COPY --from=builder /app/node_modules/.prisma ./server-build/node_modules/.prisma
 
 # Install only production deps for server
-COPY --from=builder /app/.npmrc ./server-build/
 RUN cd server-build && bun install --production && rm .npmrc
 
 # Change working directory to server-build
